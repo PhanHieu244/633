@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-using TapjoyUnity;
-
 public class MenuScript : MonoBehaviour {
 	 static bool adOpened=false;
 	public static bool firstGameStart=true;
@@ -51,7 +49,6 @@ public class MenuScript : MonoBehaviour {
 		if (!PlayerPrefs.GetString("playername","").Equals("")){
 			StartCoroutine(ServerComunication.setHighScore(PlayerPrefs.GetString("playername",""),""+getHighScore()));
 		}
-		Tapjoy.GetCurrencyBalance();
 
 
 
@@ -85,17 +82,6 @@ public class MenuScript : MonoBehaviour {
 		print ("enable");
 		ServerComunication.onNewVersion += newVersion;
 		ServerComunication.onAdRecieved += adRecieved;
-		Tapjoy.OnConnectSuccess += HandleConnectSuccess;
-		Tapjoy.OnViewDidClose += tapjoyViewDidClose;
-	
-
-		Tapjoy.OnAwardCurrencyResponse += HandleAwardCurrencyResponse;
-		Tapjoy.OnAwardCurrencyResponseFailure += HandleAwardCurrencyResponseFailure;
-		Tapjoy.OnSpendCurrencyResponse += HandleSpendCurrencyResponse;
-		Tapjoy.OnSpendCurrencyResponseFailure += HandleSpendCurrencyResponseFailure;
-		Tapjoy.OnGetCurrencyBalanceResponse += HandleGetCurrencyBalanceResponse;
-		Tapjoy.OnGetCurrencyBalanceResponseFailure += HandleGetCurrencyBalanceResponseFailure;
-		Tapjoy.OnEarnedCurrency += HandleEarnedCurrency;
 
 		ServerComunication.onSetUserName+=onSetUserName;
 		ServerComunication.onSetUserNameFailed+=onSetUsernameFailed;
@@ -107,18 +93,6 @@ public class MenuScript : MonoBehaviour {
 	void OnDisable(){
 		ServerComunication.onNewVersion -= newVersion;
 		ServerComunication.onAdRecieved -= adRecieved;
-		Tapjoy.OnConnectSuccess -= HandleConnectSuccess;
-		Tapjoy.OnViewDidClose -= tapjoyViewDidClose;
-
-
-
-		Tapjoy.OnAwardCurrencyResponse -= HandleAwardCurrencyResponse;
-		Tapjoy.OnAwardCurrencyResponseFailure -= HandleAwardCurrencyResponseFailure;
-		Tapjoy.OnSpendCurrencyResponse -= HandleSpendCurrencyResponse;
-		Tapjoy.OnSpendCurrencyResponseFailure -= HandleSpendCurrencyResponseFailure;
-		Tapjoy.OnGetCurrencyBalanceResponse -= HandleGetCurrencyBalanceResponse;
-		Tapjoy.OnGetCurrencyBalanceResponseFailure -= HandleGetCurrencyBalanceResponseFailure;
-		Tapjoy.OnEarnedCurrency -= HandleEarnedCurrency;
 
 		ServerComunication.onSetUserName-=onSetUserName;
 		ServerComunication.onSetUserNameFailed-=onSetUsernameFailed;
@@ -197,11 +171,6 @@ public class MenuScript : MonoBehaviour {
 	
 	} 
 	public void openTabJoyOfferWall(){
-		if(Tapjoy.IsConnected){
-			Tapjoy.ShowOffers();
-		} else {
-			toastMessage.GetComponent<ToastMessage>().show("No game available.");
-		}
 	}
 	void newVersion(){
 		print ("newVersion");
@@ -348,7 +317,6 @@ public class MenuScript : MonoBehaviour {
 	public void HandleGetCurrencyBalanceResponse(string currencyName, int balance) {
 		Debug.Log("C#: HandleGetCurrencyBalanceResponse: currencyName: " + currencyName + ", balance: " + balance);
 		if (balance>0){
-			Tapjoy.SpendCurrency(balance);
 			GameHandler.addErase(balance);
 			buttonErase.transform.Find("quantity").GetComponent<UILabel>().text=""+GameHandler.getEraseQuantity();
 			toastMessage.GetComponent<ToastMessage>().show(""+balance+" Eraser(s) added");
@@ -383,7 +351,7 @@ public class MenuScript : MonoBehaviour {
 		}
 		else
 		{
-			Tapjoy.GetCurrencyBalance();
+			
 		}
 	}
 }
